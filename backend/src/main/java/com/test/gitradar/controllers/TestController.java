@@ -1,26 +1,30 @@
 package com.test.gitradar.controllers;
 
 
+import com.test.gitradar.models.UserModel;
+import com.test.gitradar.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
+@RequestMapping("/test")
 public class TestController {
 
-    private List<Integer> list = new ArrayList<>();
+    @Autowired
+    private UserRepository userRepository;
 
-    private void fill_list(){
-        list.add(1);
-        list.add(2);
-        list.add(3);
-    }
+    @GetMapping("/save")
+    public String testSave() {
+        UserModel user = new UserModel();
 
-    @GetMapping("/")
-    public List<Integer> test(){
-        fill_list();
-        return list;
+        user.setGithubId(12345L);
+        user.setLogin("test_login");
+        user.setFollowing(1);
+
+        userRepository.save(user);
+        return "User saved successfully";
     }
 }
