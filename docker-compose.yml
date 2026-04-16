@@ -14,8 +14,6 @@ services:
   backend:
     build: ./backend
     container_name: gitradar-backend
-    ports:
-      - "8080:8080" # Device Port : Docker Port
     restart: always
     depends_on:
       - db
@@ -25,5 +23,15 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - GITHUB_CLIENT_ID=${CLIENT_ID}
       - GITHUB_CLIENT_SECRET=${CLIENT_SECRET}
+  gateway:
+    image: nginx:stable-alpine
+    container_name: gitradar-gateway
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    restart: always
 volumes:
   postgres_git-radar_data:
