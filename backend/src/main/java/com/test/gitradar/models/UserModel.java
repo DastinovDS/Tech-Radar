@@ -14,6 +14,7 @@ public class UserModel {
     private String login;
     private String accessToken;
     private String avatarUrl;
+    private String email;
 
     private int followers;
     private int following;
@@ -23,6 +24,13 @@ public class UserModel {
 
     public Long getGithubId() {
         return githubId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setGithubId(Long githubId) {
@@ -92,6 +100,7 @@ public class UserModel {
                      String login,
                      String accessToken,
                      String avatarUrl,
+                     String email,
                      int followers,
                      int following,
                      int totalPrivateRepos,
@@ -101,6 +110,7 @@ public class UserModel {
         this.login = login;
         this.accessToken = accessToken;
         this.avatarUrl = avatarUrl;
+        this.email = email;
         this.followers = followers;
         this.following = following;
         this.totalPrivateRepos = totalPrivateRepos;
