@@ -1,30 +1,16 @@
 package com.test.gitradar.controllers;
 
-
-import com.test.gitradar.models.UserModel;
-import com.test.gitradar.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 
 @RestController
-@RequestMapping("/test")
 public class TestController {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @GetMapping("/save")
-    public String testSave() {
-        UserModel user = new UserModel();
-
-        user.setGithubId(12345L);
-        user.setLogin("test_login");
-        user.setFollowing(1);
-
-        userRepository.save(user);
-        return "User saved successfully";
+    @GetMapping("/me")
+    public String getMe(@AuthenticationPrincipal OAuth2User user) {
+        return "Hi, " + user.getAttribute("login") + "! Now you are in our system!";
     }
 }
