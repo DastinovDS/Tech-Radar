@@ -15,6 +15,7 @@ public class RepositoryModel {
     private String languages;
     private int stargazersCount;
     private String htmlUrl;
+    private int watchers;
 
     @ManyToOne
     @JoinColumn(name="owner_id")
@@ -26,6 +27,14 @@ public class RepositoryModel {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getWatchers() {
+        return watchers;
+    }
+
+    public void setWatchers(int watchers) {
+        this.watchers = watchers;
     }
 
     public String getName() {
@@ -93,6 +102,7 @@ public class RepositoryModel {
                            String description,
                            String languages,
                            int stargazersCount,
+                           int watchers,
                            String htmlUrl,
                            UserModel owner) {
         this.id = id;
@@ -103,5 +113,6 @@ public class RepositoryModel {
         this.stargazersCount = stargazersCount;
         this.htmlUrl = htmlUrl;
         this.owner = owner;
+        this.watchers = watchers;
     }
 }
