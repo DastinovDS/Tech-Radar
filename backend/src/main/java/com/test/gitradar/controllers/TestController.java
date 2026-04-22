@@ -9,7 +9,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 @RestController
 public class TestController {
 
-    @GetMapping("/me")
+    @GetMapping("/user")
     public String getMe(@AuthenticationPrincipal OAuth2User user) {
         return "Hi, " + user.getAttribute("login") + "! Now you are in our system!";
     }
