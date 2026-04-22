@@ -21,7 +21,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth.
-                requestMatchers("/", "/login", "/error"). // Endpoints which are allowed to be visited without auth
+                requestMatchers("/v1/public/**", "/error"). // Endpoints which are allowed to be visited without auth
                 permitAll(). // We give permission for all users to visit requestMatchers
                 anyRequest(). // For any another endpoint...
                 authenticated() // User have to be authorized
@@ -30,9 +30,9 @@ public class SecurityConfig {
                 userInfoEndpoint(userInfo -> userInfo. // After logging in, we connect our Service to make smth
                         // In this current case we save some important user data to the PostgreSQL
                         userService(customOAuth2UserService)). // Here is our Service
-                defaultSuccessUrl("/me", true) // What is the endpoint for a user after successfully logging in
+                defaultSuccessUrl("/user", true) // What is the endpoint for a user after successfully logging in
         ).logout(logout -> logout.
-                logoutSuccessUrl("/"). // Where do we redirect our user after logging out
+                logoutSuccessUrl("/v1/public/"). // Where do we redirect our user after logging out
                 permitAll()); // We allow all users to come to this endpoint
         return http.build();
     }
