@@ -1,6 +1,7 @@
 package com.test.gitradar.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.test.gitradar.exceptions.*;
 import com.test.gitradar.models.RepositoryModel;
 
 import com.test.gitradar.models.UrlModel;
@@ -15,11 +16,16 @@ public class HomepageService {
     private final WebClient webClient = WebClient.create();
 
     private RepositoryModel fetchRepoData(String apiString) {
+
+        System.out.println("DEBUG: Sending request to GitHub API: " + apiString);
+
         JsonNode githubResponse = webClient.get()
                 .uri(apiString)
                 .retrieve()
+                .onStatus(status -> status.value() == 404, response -> Mono.error(new RepositoryNotFoundException()))
+                .onStatus(status -> status.value() == 403, response -> Mono.error(new RepositoryForbiddenException()))
+                .onStatus(status -> status.value() == 503, response -> Mono.error(new GithubInternalException()))
                 .bodyToMono(JsonNode.class)
-                .onErrorResume(e -> Mono.empty())
                 .block();
 
         if (githubResponse != null) {
@@ -29,7 +35,7 @@ public class HomepageService {
             repositoryModel.setWatchers(githubResponse.path("watchers_count").asInt(0));
             return  repositoryModel;
         }
-        return null;
+        else throw new UnexpectedException();
     }
 
     public RepositoryModel getRepo(UrlModel url) {
@@ -44,7 +50,10 @@ public class HomepageService {
                     return fetchRepoData(api_string);
                 }
             }
+            throw new UrlFormatException();
         }
-        return null;
+        else{
+            throw new EmtpyUrlException();
+        }
     }
 }
