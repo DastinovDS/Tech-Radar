@@ -39,7 +39,7 @@ public class HomepageService {
         else throw new UnexpectedException();
     }
 
-    @Cacheable(value = "github-api-response", key = "#url.getUrl()")
+    @Cacheable(value = "github-api-cache", key = "#url.getUrl()")
     public RepositoryModel getRepo(UrlModel url) {
         if (url.getUrl() != null){
             String[] urlParts = url.getSplittedUrl();
