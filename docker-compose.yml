@@ -23,6 +23,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
       - GITHUB_CLIENT_ID=${CLIENT_ID}
       - GITHUB_CLIENT_SECRET=${CLIENT_SECRET}
+      - SERVER_CACHE_TLL=${TLL_CACHE}
   gateway:
     image: nginx:stable-alpine
     container_name: gitradar-gateway

@@ -5,6 +5,7 @@ import com.test.gitradar.exceptions.*;
 import com.test.gitradar.models.RepositoryModel;
 
 import com.test.gitradar.models.UrlModel;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -38,6 +39,7 @@ public class HomepageService {
         else throw new UnexpectedException();
     }
 
+    @Cacheable(value = "github-api-cache", key = "#url.getUrl()")
     public RepositoryModel getRepo(UrlModel url) {
         if (url.getUrl() != null){
             String[] urlParts = url.getSplittedUrl();
