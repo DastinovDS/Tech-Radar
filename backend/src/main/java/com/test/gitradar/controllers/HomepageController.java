@@ -3,7 +3,7 @@ package com.test.gitradar.controllers;
 import com.test.gitradar.models.RepositoryModel;
 
 import com.test.gitradar.models.UrlModel;
-import com.test.gitradar.services.HomepageService;
+import com.test.gitradar.services.RepoApiRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 public class HomepageController {
 
     @Autowired
-    HomepageService homepageService;
+    RepoApiRequestService homepageService;
 
     @GetMapping("/")
     public String getHomepage() {
@@ -20,15 +20,7 @@ public class HomepageController {
     }
 
     @GetMapping("/gatherinfo")
-    public String gatherInfo(@RequestParam String url) {
-        UrlModel urlModel = new UrlModel();
-        urlModel.setUrl(url);
-        RepositoryModel repositoryModel = homepageService.getRepo(urlModel);
-        if (repositoryModel != null) {
-            return "Success!";
-        }
-        else  {
-            return "Error!";
-        }
+    public String gatherInfo() {
+        return "WOOOOW";
     }
 }

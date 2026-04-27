@@ -1,21 +1,41 @@
 package com.test.gitradar.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="repositories")
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RepositoryModel {
+
     @Id
     private Long id;
 
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("full_name")
     private String fullName;
-    private String description;
-    private String languages;
+
+    @JsonProperty("created_at")
+    private LocalDateTime createdAt;
+
+    @JsonProperty("updated_at")
+    private LocalDateTime updatedAt;
+
+    @JsonProperty("pushed_at")
+    private LocalDateTime pushedAt;
+
+    @JsonProperty("stargazers_count")
     private int stargazersCount;
-    private String htmlUrl;
+    @JsonProperty("watchers_count")
     private int watchers;
+
+    @JsonProperty("open_issues_count")
+    private int issuesCount;
 
     @ManyToOne
     @JoinColumn(name="owner_id")
@@ -27,14 +47,6 @@ public class RepositoryModel {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public int getWatchers() {
-        return watchers;
-    }
-
-    public void setWatchers(int watchers) {
-        this.watchers = watchers;
     }
 
     public String getName() {
@@ -53,20 +65,28 @@ public class RepositoryModel {
         this.fullName = fullName;
     }
 
-    public String getDescription() {
-        return description;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public String getLanguages() {
-        return languages;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setLanguages(String languages) {
-        this.languages = languages;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public LocalDateTime getPushedAt() {
+        return pushedAt;
+    }
+
+    public void setPushedAt(LocalDateTime pushedAt) {
+        this.pushedAt = pushedAt;
     }
 
     public int getStargazersCount() {
@@ -77,12 +97,20 @@ public class RepositoryModel {
         this.stargazersCount = stargazersCount;
     }
 
-    public String getHtmlUrl() {
-        return htmlUrl;
+    public int getWatchers() {
+        return watchers;
     }
 
-    public void setHtmlUrl(String htmlUrl) {
-        this.htmlUrl = htmlUrl;
+    public void setWatchers(int watchers) {
+        this.watchers = watchers;
+    }
+
+    public int getIssuesCount() {
+        return issuesCount;
+    }
+
+    public void setIssuesCount(int issuesCount) {
+        this.issuesCount = issuesCount;
     }
 
     public UserModel getOwner() {
@@ -96,23 +124,16 @@ public class RepositoryModel {
     public RepositoryModel() {
     }
 
-    public RepositoryModel(Long id,
-                           String name,
-                           String fullName,
-                           String description,
-                           String languages,
-                           int stargazersCount,
-                           int watchers,
-                           String htmlUrl,
-                           UserModel owner) {
+    public RepositoryModel(Long id, String name, String fullName, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime pushedAt, int stargazersCount, int watchers, int issuesCount, UserModel owner) {
         this.id = id;
         this.name = name;
         this.fullName = fullName;
-        this.description = description;
-        this.languages = languages;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.pushedAt = pushedAt;
         this.stargazersCount = stargazersCount;
-        this.htmlUrl = htmlUrl;
-        this.owner = owner;
         this.watchers = watchers;
+        this.issuesCount = issuesCount;
+        this.owner = owner;
     }
 }
