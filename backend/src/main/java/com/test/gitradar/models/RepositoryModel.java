@@ -37,6 +37,8 @@ public class RepositoryModel {
     @JsonProperty("open_issues_count")
     private int issuesCount;
 
+    private boolean isTracked;
+
     @ManyToOne
     @JoinColumn(name="owner_id")
     private UserModel owner;
@@ -113,6 +115,14 @@ public class RepositoryModel {
         this.issuesCount = issuesCount;
     }
 
+    public boolean getIsTracked() {
+        return isTracked;
+    }
+
+    public void setIsTracked(boolean isTracked) {
+        this.isTracked = isTracked;
+    }
+
     public UserModel getOwner() {
         return owner;
     }
@@ -124,7 +134,7 @@ public class RepositoryModel {
     public RepositoryModel() {
     }
 
-    public RepositoryModel(Long id, String name, String fullName, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime pushedAt, int stargazersCount, int watchers, int issuesCount, UserModel owner) {
+    public RepositoryModel(Long id, String name, String fullName, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime pushedAt, int stargazersCount, int watchers, int issuesCount, boolean isTracked, UserModel owner) {
         this.id = id;
         this.name = name;
         this.fullName = fullName;
@@ -134,6 +144,7 @@ public class RepositoryModel {
         this.stargazersCount = stargazersCount;
         this.watchers = watchers;
         this.issuesCount = issuesCount;
+        this.isTracked = isTracked;
         this.owner = owner;
     }
 }

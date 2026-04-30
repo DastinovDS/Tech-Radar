@@ -2,7 +2,10 @@ package com.test.gitradar.services;
 
 import com.test.gitradar.exceptions.UrlFormatException;
 import com.test.gitradar.models.UrlModel;
+import com.test.gitradar.models.UserModel;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UrlApiBuilderService {
     private boolean checkPublicUrl(UrlModel url) {
         String[] splittedUrl = url.getSplittedUrl();
@@ -15,6 +18,10 @@ public class UrlApiBuilderService {
             return "https://api.github.com/repos/" + url.getSplittedUrl()[3] + "/" + url.getSplittedUrl()[4];
         }
         else throw new UrlFormatException();
+    }
+
+    public String buildAuthRepoUrl(UserModel user) {
+        return "https://api.github.com/users/" + user.getLogin() + "/repos?per_page=100";
     }
 
 }
