@@ -35,8 +35,8 @@ public class DbRepoManagerService {
         for (RepositoryModel repository : repositories) {
             if (!repoIds.contains(repository.getId())) {
                 RepositoryModel newRepo = new RepositoryModel();
+                owner.addRepository(newRepo);
                 newRepo.setId(repository.getId());
-                newRepo.setOwner(owner);
                 newRepo.setName(repository.getName());
                 newRepo.setIsTracked(false);
                 newRepositories.add(newRepo);
@@ -54,7 +54,7 @@ public class DbRepoManagerService {
             List<RepositoryModel> apiResponse = repoApiRequestService.fetchReposData(urlApiBuilderService.buildAuthRepoUrl(owner), owner.getAccessToken());
             List<RepositoryModel> reposToUpdate = apiResponse.stream()
                     .filter(repo -> repoIds.contains(repo.getId()))
-                    .peek(repo -> {repo.setOwner(owner); repo.setIsTracked(true);})
+                    .peek(repo -> {owner.addRepository(repo); repo.setIsTracked(true);})
                     .toList();
             repoRepository.saveAll(reposToUpdate);
         }
@@ -72,7 +72,7 @@ public class DbRepoManagerService {
                 .map(repo -> {
                     RepositoryModel clearedRepo = new RepositoryModel();
                     clearedRepo.setId(repo.getId());
-                    clearedRepo.setOwner(owner);
+                    owner.addRepository(clearedRepo);
                     clearedRepo.setName(repo.getName());
                     clearedRepo.setIsTracked(false);
                     return clearedRepo;
