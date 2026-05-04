@@ -9,6 +9,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
+
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -39,6 +41,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String name = oAuth2User.getAttribute("login");
         String email = oAuth2User.getAttribute("email");
+        String avatarUrl = oAuth2User.getAttribute("avatar_url");
+        Integer followers = oAuth2User.getAttribute("followers");
+        Integer following = oAuth2User.getAttribute("following");
+
         if(email == null) email = "hidden@email.com";
 
         if(!userRepository.existsById(githubId)){
@@ -47,6 +53,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             newUser.setGithubId(githubId);
             newUser.setLogin(name);
             newUser.setEmail(email);
+            newUser.setAvatarUrl(avatarUrl);
+            newUser.setFollowers(followers);
+            newUser.setFollowing(following);
+            newUser.setLastSync(LocalDateTime.now());
 
             userRepository.save(newUser);
         }

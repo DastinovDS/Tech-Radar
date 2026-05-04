@@ -11,6 +11,14 @@ services:
       - "5433:5432"
     volumes:
       - postgres_git-radar_data:/var/lib/postgresql/data
+  frontend-build:
+    image: node:20-alpine
+    container_name: gitradar-frontend-build
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - frontend_dist:/app/dist
+    command: sh -c "npm install && npm run build"
   backend:
     build: ./backend
     container_name: gitradar-backend
@@ -31,8 +39,11 @@ services:
       - "80:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - frontend_dist:/usr/share/nginx/html:ro
     depends_on:
       - backend
+      - frontend-build
     restart: always
 volumes:
   postgres_git-radar_data:
+  frontend_dist:

@@ -18,7 +18,6 @@ public class UserModel {
 
     private int followers;
     private int following;
-    private int totalPrivateRepos;
 
     private LocalDateTime lastSync;
 
@@ -77,14 +76,6 @@ public class UserModel {
         this.following = following;
     }
 
-    public int getTotalPrivateRepos() {
-        return totalPrivateRepos;
-    }
-
-    public void setTotalPrivateRepos(int totalPrivateRepos) {
-        this.totalPrivateRepos = totalPrivateRepos;
-    }
-
     public LocalDateTime getLastSync() {
         return lastSync;
     }
@@ -103,7 +94,6 @@ public class UserModel {
                      String email,
                      int followers,
                      int following,
-                     int totalPrivateRepos,
                      LocalDateTime lastSync) {
 
         this.githubId = githubId;
@@ -113,7 +103,6 @@ public class UserModel {
         this.email = email;
         this.followers = followers;
         this.following = following;
-        this.totalPrivateRepos = totalPrivateRepos;
         this.lastSync = lastSync;
     }
 }
