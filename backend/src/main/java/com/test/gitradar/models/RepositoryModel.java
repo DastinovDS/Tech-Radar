@@ -1,41 +1,22 @@
 package com.test.gitradar.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="repositories")
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class RepositoryModel {
 
     @Id
-    private Long id;
+    private Long repoId;
 
-    @JsonProperty("name")
     private String name;
-    @JsonProperty("full_name")
-    private String fullName;
 
-    @JsonProperty("created_at")
-    private LocalDateTime createdAt;
-
-    @JsonProperty("updated_at")
-    private LocalDateTime updatedAt;
-
-    @JsonProperty("pushed_at")
-    private LocalDateTime pushedAt;
-
-    @JsonProperty("stargazers_count")
-    private int stargazersCount;
-    @JsonProperty("watchers_count")
-    private int watchers;
-
-    @JsonProperty("open_issues_count")
-    private int issuesCount;
+    private LocalDateTime lastSyncedAt;
 
     private boolean isTracked;
 
@@ -43,12 +24,19 @@ public class RepositoryModel {
     @JoinColumn(name="owner_id")
     private UserModel owner;
 
-    public Long getId() {
-        return id;
+    @OneToMany(mappedBy = "ownerRepo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RepositoryRecordModel> repositoryRecords = new ArrayList<>();
+
+    public void clearRepositoryRecords() {
+        repositoryRecords.clear();
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getRepoId() {
+        return repoId;
+    }
+
+    public void setRepoId(Long repoId) {
+        this.repoId = repoId;
     }
 
     public String getName() {
@@ -59,68 +47,20 @@ public class RepositoryModel {
         this.name = name;
     }
 
-    public String getFullName() {
-        return fullName;
+    public LocalDateTime getLastSyncedAt() {
+        return lastSyncedAt;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setLastSyncedAt(LocalDateTime lastSyncedAt) {
+        this.lastSyncedAt = lastSyncedAt;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public LocalDateTime getPushedAt() {
-        return pushedAt;
-    }
-
-    public void setPushedAt(LocalDateTime pushedAt) {
-        this.pushedAt = pushedAt;
-    }
-
-    public int getStargazersCount() {
-        return stargazersCount;
-    }
-
-    public void setStargazersCount(int stargazersCount) {
-        this.stargazersCount = stargazersCount;
-    }
-
-    public int getWatchers() {
-        return watchers;
-    }
-
-    public void setWatchers(int watchers) {
-        this.watchers = watchers;
-    }
-
-    public int getIssuesCount() {
-        return issuesCount;
-    }
-
-    public void setIssuesCount(int issuesCount) {
-        this.issuesCount = issuesCount;
-    }
-
-    public boolean getIsTracked() {
+    public boolean isTracked() {
         return isTracked;
     }
 
-    public void setIsTracked(boolean isTracked) {
-        this.isTracked = isTracked;
+    public void setTracked(boolean tracked) {
+        isTracked = tracked;
     }
 
     public UserModel getOwner() {
@@ -131,20 +71,14 @@ public class RepositoryModel {
         this.owner = owner;
     }
 
-    public RepositoryModel() {
+    public List<RepositoryRecordModel> getRepositoryRecords() {
+        return repositoryRecords;
     }
 
-    public RepositoryModel(Long id, String name, String fullName, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime pushedAt, int stargazersCount, int watchers, int issuesCount, boolean isTracked, UserModel owner) {
-        this.id = id;
-        this.name = name;
-        this.fullName = fullName;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.pushedAt = pushedAt;
-        this.stargazersCount = stargazersCount;
-        this.watchers = watchers;
-        this.issuesCount = issuesCount;
-        this.isTracked = isTracked;
-        this.owner = owner;
+    public void setRepositoryRecords(List<RepositoryRecordModel> repositoryRecords) {
+        this.repositoryRecords = repositoryRecords;
+    }
+
+    public RepositoryModel() {
     }
 }

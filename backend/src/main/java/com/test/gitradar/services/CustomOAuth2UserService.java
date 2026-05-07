@@ -40,22 +40,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         String name = oAuth2User.getAttribute("login");
-        String email = oAuth2User.getAttribute("email");
         String avatarUrl = oAuth2User.getAttribute("avatar_url");
-        Integer followers = oAuth2User.getAttribute("followers");
-        Integer following = oAuth2User.getAttribute("following");
 
-        if(email == null) email = "hidden@email.com";
 
         if(!userRepository.existsById(githubId)){
             UserModel newUser = new UserModel();
             newUser.setAccessToken(accessToken);
             newUser.setGithubId(githubId);
             newUser.setLogin(name);
-            newUser.setEmail(email);
             newUser.setAvatarUrl(avatarUrl);
-            newUser.setFollowers(followers);
-            newUser.setFollowing(following);
             newUser.setLastSync(LocalDateTime.now());
 
             userRepository.save(newUser);
