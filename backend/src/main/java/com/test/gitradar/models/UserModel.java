@@ -3,6 +3,8 @@ package com.test.gitradar.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -14,23 +16,18 @@ public class UserModel {
     private String login;
     private String accessToken;
     private String avatarUrl;
-    private String email;
-
-    private int followers;
-    private int following;
-    private int totalPrivateRepos;
 
     private LocalDateTime lastSync;
 
-    public Long getGithubId() {
-        return githubId;
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RepositoryModel> repositories =  new ArrayList<>();
+
+    public void addRepository(RepositoryModel repository){
+        repositories.add(repository);
     }
 
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
+    public Long getGithubId() {
+        return githubId;
     }
 
     public void setGithubId(Long githubId) {
@@ -61,30 +58,6 @@ public class UserModel {
         this.avatarUrl = avatarUrl;
     }
 
-    public int getFollowers() {
-        return followers;
-    }
-
-    public void setFollowers(int followers) {
-        this.followers = followers;
-    }
-
-    public int getFollowing() {
-        return following;
-    }
-
-    public void setFollowing(int following) {
-        this.following = following;
-    }
-
-    public int getTotalPrivateRepos() {
-        return totalPrivateRepos;
-    }
-
-    public void setTotalPrivateRepos(int totalPrivateRepos) {
-        this.totalPrivateRepos = totalPrivateRepos;
-    }
-
     public LocalDateTime getLastSync() {
         return lastSync;
     }
@@ -93,27 +66,14 @@ public class UserModel {
         this.lastSync = lastSync;
     }
 
-    public UserModel() {
+    public List<RepositoryModel> getRepositories() {
+        return repositories;
     }
 
-    public UserModel(Long githubId,
-                     String login,
-                     String accessToken,
-                     String avatarUrl,
-                     String email,
-                     int followers,
-                     int following,
-                     int totalPrivateRepos,
-                     LocalDateTime lastSync) {
+    public void setRepositories(List<RepositoryModel> repositories) {
+        this.repositories = repositories;
+    }
 
-        this.githubId = githubId;
-        this.login = login;
-        this.accessToken = accessToken;
-        this.avatarUrl = avatarUrl;
-        this.email = email;
-        this.followers = followers;
-        this.following = following;
-        this.totalPrivateRepos = totalPrivateRepos;
-        this.lastSync = lastSync;
+    public UserModel() {
     }
 }

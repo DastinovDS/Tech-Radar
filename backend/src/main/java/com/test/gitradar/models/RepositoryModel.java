@@ -2,39 +2,41 @@ package com.test.gitradar.models;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name="repositories")
 
 public class RepositoryModel {
+
     @Id
-    private Long id;
+    private Long repoId;
 
     private String name;
-    private String fullName;
-    private String description;
-    private String languages;
-    private int stargazersCount;
-    private String htmlUrl;
-    private int watchers;
+
+    private LocalDateTime lastSyncedAt;
+
+    private boolean isTracked;
 
     @ManyToOne
     @JoinColumn(name="owner_id")
     private UserModel owner;
 
-    public Long getId() {
-        return id;
+    @OneToMany(mappedBy = "ownerRepo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RepositoryRecordModel> repositoryRecords = new ArrayList<>();
+
+    public void clearRepositoryRecords() {
+        this.repositoryRecords.clear();
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getRepoId() {
+        return repoId;
     }
 
-    public int getWatchers() {
-        return watchers;
-    }
-
-    public void setWatchers(int watchers) {
-        this.watchers = watchers;
+    public void setRepoId(Long repoId) {
+        this.repoId = repoId;
     }
 
     public String getName() {
@@ -45,44 +47,20 @@ public class RepositoryModel {
         this.name = name;
     }
 
-    public String getFullName() {
-        return fullName;
+    public LocalDateTime getLastSyncedAt() {
+        return lastSyncedAt;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setLastSyncedAt(LocalDateTime lastSyncedAt) {
+        this.lastSyncedAt = lastSyncedAt;
     }
 
-    public String getDescription() {
-        return description;
+    public boolean isTracked() {
+        return isTracked;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getLanguages() {
-        return languages;
-    }
-
-    public void setLanguages(String languages) {
-        this.languages = languages;
-    }
-
-    public int getStargazersCount() {
-        return stargazersCount;
-    }
-
-    public void setStargazersCount(int stargazersCount) {
-        this.stargazersCount = stargazersCount;
-    }
-
-    public String getHtmlUrl() {
-        return htmlUrl;
-    }
-
-    public void setHtmlUrl(String htmlUrl) {
-        this.htmlUrl = htmlUrl;
+    public void setTracked(boolean tracked) {
+        isTracked = tracked;
     }
 
     public UserModel getOwner() {
@@ -93,26 +71,14 @@ public class RepositoryModel {
         this.owner = owner;
     }
 
-    public RepositoryModel() {
+    public List<RepositoryRecordModel> getRepositoryRecords() {
+        return repositoryRecords;
     }
 
-    public RepositoryModel(Long id,
-                           String name,
-                           String fullName,
-                           String description,
-                           String languages,
-                           int stargazersCount,
-                           int watchers,
-                           String htmlUrl,
-                           UserModel owner) {
-        this.id = id;
-        this.name = name;
-        this.fullName = fullName;
-        this.description = description;
-        this.languages = languages;
-        this.stargazersCount = stargazersCount;
-        this.htmlUrl = htmlUrl;
-        this.owner = owner;
-        this.watchers = watchers;
+    public void setRepositoryRecords(List<RepositoryRecordModel> repositoryRecords) {
+        this.repositoryRecords = repositoryRecords;
+    }
+
+    public RepositoryModel() {
     }
 }
