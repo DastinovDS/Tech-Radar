@@ -28,7 +28,7 @@ public class RepositoryModel {
     private List<RepositoryRecordModel> repositoryRecords = new ArrayList<>();
 
     public void clearRepositoryRecords() {
-        repositoryRecords.clear();
+        this.repositoryRecords.clear();
     }
 
     public Long getRepoId() {

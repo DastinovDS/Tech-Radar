@@ -22,6 +22,10 @@ public class UserModel {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RepositoryModel> repositories =  new ArrayList<>();
 
+    public void addRepository(RepositoryModel repository){
+        repositories.add(repository);
+    }
+
     public Long getGithubId() {
         return githubId;
     }

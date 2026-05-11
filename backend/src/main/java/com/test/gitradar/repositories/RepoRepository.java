@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 @Repository
 public interface RepoRepository extends JpaRepository<RepositoryModel, Long> {
@@ -16,4 +18,6 @@ public interface RepoRepository extends JpaRepository<RepositoryModel, Long> {
             @Param("owner") UserModel owner,
             @Param("repoId") Long repoId
     );
+
+    List<RepositoryModel> findAllByOwnerAndIdIn(UserModel owner, List<Long> ids);
 }
