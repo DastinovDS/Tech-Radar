@@ -13,11 +13,11 @@ import java.util.List;
 @Repository
 public interface RepoRepository extends JpaRepository<RepositoryModel, Long> {
 
-    @Query("select repo from RepositoryModel repo where repo.owner = :owner and repo.id = :repoId")
+    @Query("select repo from RepositoryModel repo where repo.owner = :owner and repo.repoId = :repoId")
     RepositoryModel getRepoByOwner(
             @Param("owner") UserModel owner,
             @Param("repoId") Long repoId
     );
 
-    List<RepositoryModel> findAllByOwnerAndIdIn(UserModel owner, List<Long> ids);
+    List<RepositoryModel> findAllByOwnerAndRepoIdIn(UserModel owner, List<Long> ids);
 }

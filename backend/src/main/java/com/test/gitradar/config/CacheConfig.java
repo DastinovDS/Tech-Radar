@@ -3,7 +3,6 @@ package com.test.gitradar.config;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.test.gitradar.handlers.CustomCacheErrorHandler;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;

@@ -1,21 +1,28 @@
 package com.test.gitradar.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import com.test.gitradar.exceptions.RepositoryNotFoundException;
 import com.test.gitradar.exceptions.UserNotFoundException;
+
 import com.test.gitradar.models.RepositoryModel;
 import com.test.gitradar.models.UserModel;
+
 import com.test.gitradar.repositories.RepoRepository;
 import com.test.gitradar.repositories.RepositoryRecordRepository;
 import com.test.gitradar.repositories.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.springframework.stereotype.Service;
+
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.time.LocalDateTime;
 
 @Service
 public class RepositoryService {
@@ -35,9 +42,6 @@ public class RepositoryService {
     @Autowired
     ApiRequestService apiRequestService;
 
-    @Autowired
-    UrlApiBuilderService urlApiBuilderService;
-
     private UserModel findUserOrThrow(Long userId) {
         return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
@@ -51,13 +55,13 @@ public class RepositoryService {
     @Transactional
     public void addRecords(Long userId, List<Long> repoIds){
         UserModel user = findUserOrThrow(userId);
-        List<RepositoryModel> repositoryList = repoRepository.findAllByOwnerAndIdIn(user, repoIds);
+        List<RepositoryModel> repositoryList = repoRepository.findAllByOwnerAndRepoIdIn(user, repoIds);
 
         if(repositoryList.isEmpty()) return;
 
         List<Mono<Void>> snapshots = repositoryList.stream()
                 .map(repo ->{
-                    String apiString = urlApiBuilderService.buildRepositoryUrl(user, repo);
+                    String apiString = UrlApiBuilderService.buildRepositoryUrl(user, repo);
                     return apiRequestService.performApiRequest(apiString, user.getAccessToken())
                             .flatMap(json ->{
                                 repositoryRecordDbService.createSnapshot(repo, Mono.just(json));
@@ -84,7 +88,7 @@ public class RepositoryService {
 
     public void addRepositories(Long userId){
         UserModel user = findUserOrThrow(userId);
-        String apiString = urlApiBuilderService.buildAuthRepoUrl(user);
+        String apiString = UrlApiBuilderService.buildAuthRepoUrl(user);
 
         JsonNode response = apiRequestService.performApiRequest(apiString, user.getAccessToken()).block();
 
@@ -116,7 +120,7 @@ public class RepositoryService {
     @Transactional
     public void activateRepositories(Long userId, List<Long> repoIds){
         UserModel user = findUserOrThrow(userId);
-        List<RepositoryModel> repositoryList = repoRepository.findAllByOwnerAndIdIn(user, repoIds);
+        List<RepositoryModel> repositoryList = repoRepository.findAllByOwnerAndRepoIdIn(user, repoIds);
 
         if (repositoryList.isEmpty()) return;
 
@@ -129,7 +133,7 @@ public class RepositoryService {
     @Transactional
     public void deactivateRepositories(Long userId, List<Long> repoIds){
         UserModel user = findUserOrThrow(userId);
-        List<RepositoryModel> repositoryList = repoRepository.findAllByOwnerAndIdIn(user, repoIds);
+        List<RepositoryModel> repositoryList = repoRepository.findAllByOwnerAndRepoIdIn(user, repoIds);
 
         if(repositoryList.isEmpty()) return;
 

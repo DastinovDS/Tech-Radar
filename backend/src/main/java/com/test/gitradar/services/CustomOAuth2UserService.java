@@ -1,5 +1,6 @@
 package com.test.gitradar.services;
 
+import com.test.gitradar.exceptions.UserNotFoundException;
 import com.test.gitradar.models.UserModel;
 import com.test.gitradar.repositories.UserRepository;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -53,6 +54,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             userRepository.save(newUser);
         }
+        else throw new UserNotFoundException();
+        
         return oAuth2User;
     }
 }
