@@ -6,12 +6,11 @@ import com.test.gitradar.models.RepositoryRecordModel;
 import com.test.gitradar.repositories.RepositoryRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
 @Service
-public class RepositoryRecordDbService {
+public class RepositoryRecordService {
 
     @Autowired
     RepositoryRecordRepository repositoryRecordRepository;

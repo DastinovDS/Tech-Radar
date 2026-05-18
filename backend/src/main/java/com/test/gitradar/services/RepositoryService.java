@@ -33,7 +33,7 @@ public class RepositoryService {
     RepoRepository repoRepository;
 
     @Autowired
-    RepositoryRecordDbService  repositoryRecordDbService;
+    RepositoryRecordService repositoryRecordDbService;
 
     @Autowired
     RepositoryRecordRepository repositoryRecordRepository;
