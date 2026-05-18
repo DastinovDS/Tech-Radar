@@ -16,26 +16,13 @@ public class RepositoryRecordDbService {
     @Autowired
     RepositoryRecordRepository repositoryRecordRepository;
 
-    public void createSnapshot(RepositoryModel repository, Mono<JsonNode> response) {
+    public void createSnapshot(RepositoryModel repository, JsonNode json) {
+        RepositoryRecordModel record = new RepositoryRecordModel();
+        record.setOwnerRepo(repository);
+        repository.addRepositoryRecord(record);
+        record.setLastSyncedAt(LocalDateTime.now());
+        record.setTestString(json.path("name").asText());
 
-        if(repository == null) throw new IllegalArgumentException("RepositoryModel is null");
-
-        response.map(json -> {
-
-            // Creating model instance
-            RepositoryRecordModel record = new RepositoryRecordModel();
-
-            // Setting significant attributes
-            record.setOwnerRepo(repository);
-            record.setLastSyncedAt(LocalDateTime.now());
-
-            // Adding statistic info
-
-            record.setTestString(json.path("name").asText());
-
-            return record;
-        }).doOnNext(record -> {
-            repositoryRecordRepository.save(record);
-        }).subscribe();
+        repositoryRecordRepository.save(record);
     }
 }

@@ -1,21 +1,27 @@
 package com.test.gitradar.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
 import com.test.gitradar.exceptions.RepositoryNotFoundException;
 import com.test.gitradar.exceptions.UserNotFoundException;
+
 import com.test.gitradar.models.RepositoryModel;
 import com.test.gitradar.models.UserModel;
+
 import com.test.gitradar.repositories.RepoRepository;
 import com.test.gitradar.repositories.RepositoryRecordRepository;
 import com.test.gitradar.repositories.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Mono;
+
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class RepositoryService {
@@ -35,9 +41,6 @@ public class RepositoryService {
     @Autowired
     ApiRequestService apiRequestService;
 
-    @Autowired
-    UrlApiBuilderService urlApiBuilderService;
-
     private UserModel findUserOrThrow(Long userId) {
         return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
@@ -49,29 +52,28 @@ public class RepositoryService {
     }
 
     @Transactional
-    public void addRecords(Long userId, List<Long> repoIds){
+    public void addRecords(Long userId, List<Long> repoIds) {
         UserModel user = findUserOrThrow(userId);
-        List<RepositoryModel> repositoryList = repoRepository.findAllByOwnerAndIdIn(user, repoIds);
 
-        if(repositoryList.isEmpty()) return;
+        Set<RepositoryModel> repositorySet = repoRepository.findAllByOwnerAndRepoIdIn(user, repoIds);
 
-        List<Mono<Void>> snapshots = repositoryList.stream()
-                .map(repo ->{
-                    String apiString = urlApiBuilderService.buildRepositoryUrl(user, repo);
-                    return apiRequestService.performApiRequest(apiString, user.getAccessToken())
-                            .flatMap(json ->{
-                                repositoryRecordDbService.createSnapshot(repo, Mono.just(json));
-                                repo.setLastSyncedAt(LocalDateTime.now());
-                                return Mono.empty();
-                            })
-                            .onErrorResume(throwable -> Mono.empty())
-                            .then();
-                })
-                .toList();
+        if (repositorySet.isEmpty()) return;
 
-        Mono.when(snapshots).block();
+        for (RepositoryModel repo : repositorySet) {
+            try {
+                String apiString = UrlApiBuilderService.buildRepositoryUrl(user, repo);
+                JsonNode json = apiRequestService.performApiRequest(apiString, user.getAccessToken()).block();
 
-        repoRepository.saveAll(repositoryList);
+                if (json != null) {
+                    repositoryRecordDbService.createSnapshot(repo, json);
+                    repo.setLastSyncedAt(LocalDateTime.now());
+                }
+            } catch (Exception e) {
+                System.err.println("Failed to sync repo: " + repo.getRepoId() + " Error: " + e.getMessage());
+            }
+        }
+
+        repoRepository.saveAll(repositorySet);
     }
 
     @Transactional
@@ -79,49 +81,49 @@ public class RepositoryService {
         UserModel user = findUserOrThrow(repoOwnerId);
         RepositoryModel repository = findRepositoryOrThrow(user, repoId);
 
-        repositoryRecordRepository.deleteByRepository(repository);
+        repository.clearRepositoryRecords();
     }
 
-    public void addRepositories(Long userId){
+    @Transactional
+    public void addRepositories(Long userId) {
         UserModel user = findUserOrThrow(userId);
-        String apiString = urlApiBuilderService.buildAuthRepoUrl(user);
+        String apiString = UrlApiBuilderService.buildAuthRepoUrl(user);
 
         JsonNode response = apiRequestService.performApiRequest(apiString, user.getAccessToken()).block();
 
-        if(response != null && response.isArray()){
-            List<RepositoryModel> repositoryList = new ArrayList<>();
-            for(JsonNode jsonRepo : response){
-                if(!repoRepository.existsById(jsonRepo.path("id").asLong())){
+        if (response != null && response.isArray()) {
+            Set<Long> existingRepoIds = user.getRepositories().stream()
+                    .map(RepositoryModel::getRepoId)
+                    .collect(Collectors.toSet());
+
+            for (JsonNode jsonRepo : response) {
+                Long githubRepoId = jsonRepo.path("id").asLong();
+
+                if (!existingRepoIds.contains(githubRepoId)) {
                     RepositoryModel repository = new RepositoryModel();
+                    repository.setRepoId(githubRepoId);
+                    repository.setTracked(false);
+                    repository.setLastSyncedAt(LocalDateTime.now());
+                    repository.setName(jsonRepo.path("name").asText());
 
                     repository.setOwner(user);
                     user.addRepository(repository);
-                    repository.setTracked(false);
 
-                    repository.setName(jsonRepo.path("name").asText());
-                    repository.setRepoId(jsonRepo.path("id").asLong());
-                    repository.setLastSyncedAt(LocalDateTime.now());
-
-
-                    repositoryList.add(repository);
                 }
             }
-
-            if(!repositoryList.isEmpty()){
-                repoRepository.saveAll(repositoryList);
-            }
+            userRepository.save(user);
         }
     }
 
     @Transactional
     public void activateRepositories(Long userId, List<Long> repoIds){
         UserModel user = findUserOrThrow(userId);
-        List<RepositoryModel> repositoryList = repoRepository.findAllByOwnerAndIdIn(user, repoIds);
+        Set<RepositoryModel> repositorySet = repoRepository.findAllByOwnerAndRepoIdIn(user, repoIds);
 
-        if (repositoryList.isEmpty()) return;
+        if (repositorySet.isEmpty()) return;
 
-        repositoryList.forEach(repo -> repo.setTracked(true));
-        repoRepository.saveAll(repositoryList);
+        repositorySet.forEach(repo -> repo.setTracked(true));
+        repoRepository.saveAll(repositorySet);
 
         addRecords(userId, repoIds);
     }
@@ -129,15 +131,15 @@ public class RepositoryService {
     @Transactional
     public void deactivateRepositories(Long userId, List<Long> repoIds){
         UserModel user = findUserOrThrow(userId);
-        List<RepositoryModel> repositoryList = repoRepository.findAllByOwnerAndIdIn(user, repoIds);
+        Set<RepositoryModel> repositorySet = repoRepository.findAllByOwnerAndRepoIdIn(user, repoIds);
 
-        if(repositoryList.isEmpty()) return;
+        if(repositorySet.isEmpty()) return;
 
-        repositoryList.forEach(repository -> {
+        repositorySet.forEach(repository -> {
             repository.setTracked(false);
             repository.clearRepositoryRecords();
         });
 
-        repoRepository.saveAll(repositoryList);
+        repoRepository.saveAll(repositorySet);
     }
 }

@@ -8,6 +8,20 @@ import java.time.LocalDateTime;
 @Table(name = "repository_records")
 
 public class RepositoryRecordModel {
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof RepositoryRecordModel that)) return false;
+        if (id == null || that.id == null) return false;
+        return java.util.Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hashCode(id);
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

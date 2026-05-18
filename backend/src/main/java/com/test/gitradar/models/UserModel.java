@@ -3,8 +3,8 @@ package com.test.gitradar.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -18,9 +18,10 @@ public class UserModel {
     private String avatarUrl;
 
     private LocalDateTime lastSync;
+    private boolean hasCompletedOnboarding = false;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RepositoryModel> repositories =  new ArrayList<>();
+    private Set<RepositoryModel> repositories =  new HashSet<>();
 
     public void addRepository(RepositoryModel repository){
         repositories.add(repository);
@@ -66,12 +67,20 @@ public class UserModel {
         this.lastSync = lastSync;
     }
 
-    public List<RepositoryModel> getRepositories() {
+    public Set<RepositoryModel> getRepositories() {
         return repositories;
     }
 
-    public void setRepositories(List<RepositoryModel> repositories) {
+    public void setRepositories(Set<RepositoryModel> repositories) {
         this.repositories = repositories;
+    }
+
+    public boolean isHasCompletedOnboarding() {
+        return hasCompletedOnboarding;
+    }
+
+    public void setHasCompletedOnboarding(boolean hasCompletedOnboarding) {
+        this.hasCompletedOnboarding = hasCompletedOnboarding;
     }
 
     public UserModel() {

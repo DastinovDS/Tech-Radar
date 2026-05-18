@@ -37,7 +37,7 @@ public class SecurityConfig {
                 userInfoEndpoint(userInfo -> userInfo. // After logging in, we connect our Service to make smth
                         // In this current case we save some important user data to the PostgreSQL
                         userService(customOAuth2UserService)). // Here is our Service
-                defaultSuccessUrl("/user", true) // What is the endpoint for a user after successfully logging in
+                defaultSuccessUrl("/api/v1/user/me", true) // What is the endpoint for a user after successfully logging in
         ).logout(logout -> logout.
                 logoutSuccessUrl("/v1/public/"). // Where do we redirect our user after logging out
                 permitAll()); // We allow all users to come to this endpoint
