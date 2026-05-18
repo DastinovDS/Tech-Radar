@@ -1,10 +1,10 @@
-package com.test.gitradar.models;
+package com.test.gitradar.dto;
 
-public class UrlModel {
+public class UrlDTO {
 
     private String url;
 
-    public String[] getSplittedUrl(){
+    public String[] getSplitUrl(){
         return url.split("/");
     }
 

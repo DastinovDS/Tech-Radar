@@ -19,12 +19,17 @@ public class UserModel {
 
     private LocalDateTime lastSync;
     private boolean hasCompletedOnboarding = false;
+    private boolean trackedForLeaderboard = false;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RepositoryModel> repositories =  new HashSet<>();
 
     public void addRepository(RepositoryModel repository){
         repositories.add(repository);
+    }
+
+    public void deleteRepositories(){
+        repositories.clear();
     }
 
     public Long getGithubId() {
@@ -81,6 +86,14 @@ public class UserModel {
 
     public void setHasCompletedOnboarding(boolean hasCompletedOnboarding) {
         this.hasCompletedOnboarding = hasCompletedOnboarding;
+    }
+
+    public boolean isTrackedForLeaderboard() {
+        return trackedForLeaderboard;
+    }
+
+    public void setTrackedForLeaderboard(boolean trackedForLeaderboard) {
+        this.trackedForLeaderboard = trackedForLeaderboard;
     }
 
     public UserModel() {

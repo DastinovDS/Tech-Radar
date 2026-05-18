@@ -1,0 +1,27 @@
+### 5. Gain UserProfileDTO
+GET http://localhost/api/v1/profile
+Cookie: JSESSIONID=
+Accept: application/json
+
+> {%
+    client.test("Profile DTO parsed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        client.assert(response.body.hasOwnProperty("username"), "Missing username field");
+        client.assert(!response.body.hasOwnProperty("accessToken"), "Security breach: accessToken leaked!");
+    });
+%}
+
+### 6. Deleting an account
+DELETE http://localhost/api/v1/profile
+Cookie: JSESSIONID=
+
+> {%
+    client.test("Account deleted and logged out", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### 7. Checking correct logout
+GET http://localhost/api/v1/profile
+Cookie: JSESSIONID=
+Accept: application/json

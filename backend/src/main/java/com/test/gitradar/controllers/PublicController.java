@@ -1,7 +1,7 @@
 package com.test.gitradar.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.test.gitradar.models.UrlModel;
+import com.test.gitradar.dto.UrlDTO;
 import com.test.gitradar.services.ApiRequestService;
 import com.test.gitradar.services.UrlApiBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ public class PublicController {
     private ApiRequestService apiRequestService;
 
     @PostMapping("/inspect")
-    public ResponseEntity<JsonNode> inspectRepository(@RequestBody UrlModel url) {
+    public ResponseEntity<JsonNode> inspectRepository(@RequestBody UrlDTO url) {
         String apiUrl = UrlApiBuilderService.buildPublicUrl(url);
 
         JsonNode response = apiRequestService.performApiRequest(apiUrl, null).block();
