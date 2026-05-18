@@ -1,0 +1,37 @@
+### First initialisation of repositories
+POST http://localhost/api/v1/onboarding/init
+Cookie: JSESSIONID=
+Accept: application/json
+
+> {%
+    client.test("Request executed successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+    });
+%}
+
+### 2. Confirming repositories tracking choice
+POST http://localhost/api/v1/onboarding/confirm
+Cookie: JSESSIONID=
+Content-Type: application/json
+
+[
+  1161631917,
+  1203889991
+]
+
+### 3. Activation of repositories
+POST http://localhost/api/v1/onboarding/activate
+Content-Type: application/json
+
+[
+  1161631917
+]
+
+### 4. Deactivation of repositories
+POST http://localhost/api/v1/onboarding/deactivate
+Cookie: JSESSIONID=
+Content-Type: application/json
+
+[
+  1161631917
+]

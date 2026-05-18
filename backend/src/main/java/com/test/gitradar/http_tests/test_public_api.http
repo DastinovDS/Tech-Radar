@@ -1,0 +1,6 @@
+POST http://localhost/api/v1/public/inspect
+Content-Type: application/json
+
+{
+  "url": "https://github.com/octocat/"
+}

@@ -3,13 +3,25 @@ package com.test.gitradar.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="repositories")
 
 public class RepositoryModel {
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof RepositoryModel that)) return false;
+        return java.util.Objects.equals(repoId, that.repoId);
+    }
+
+    @Override
+    public int hashCode() {
+        return java.util.Objects.hashCode(repoId);
+    }
 
     @Id
     private Long repoId;
@@ -25,10 +37,14 @@ public class RepositoryModel {
     private UserModel owner;
 
     @OneToMany(mappedBy = "ownerRepo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RepositoryRecordModel> repositoryRecords = new ArrayList<>();
+    private Set<RepositoryRecordModel> repositoryRecords = new HashSet<>();
 
     public void clearRepositoryRecords() {
         this.repositoryRecords.clear();
+    }
+
+    public void addRepositoryRecord(RepositoryRecordModel repositoryRecord) {
+        this.repositoryRecords.add(repositoryRecord);
     }
 
     public Long getRepoId() {
@@ -71,11 +87,11 @@ public class RepositoryModel {
         this.owner = owner;
     }
 
-    public List<RepositoryRecordModel> getRepositoryRecords() {
+    public Set<RepositoryRecordModel> getRepositoryRecords() {
         return repositoryRecords;
     }
 
-    public void setRepositoryRecords(List<RepositoryRecordModel> repositoryRecords) {
+    public void setRepositoryRecords(Set<RepositoryRecordModel> repositoryRecords) {
         this.repositoryRecords = repositoryRecords;
     }
 

@@ -51,11 +51,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             newUser.setLogin(name);
             newUser.setAvatarUrl(avatarUrl);
             newUser.setLastSync(LocalDateTime.now());
+            newUser.setHasCompletedOnboarding(false);
 
             userRepository.save(newUser);
         }
-        else throw new UserNotFoundException();
-        
+        else{
+            UserModel user = userRepository.findById(githubId).orElseThrow(UserNotFoundException::new);
+            user.setLogin(name);
+            user.setAccessToken(accessToken);
+            user.setLastSync(LocalDateTime.now());
+
+            userRepository.save(user);
+        }
+
         return oAuth2User;
     }
 }
