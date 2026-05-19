@@ -3,6 +3,8 @@ package com.test.gitradar.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "repository_records")
@@ -32,14 +34,36 @@ public class RepositoryRecordModel {
     @JoinColumn(name="repository_id")
     private RepositoryModel ownerRepo;
 
-    private String testString;
+    @OneToMany(mappedBy = "ownerRecord", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<RepositoryLanguageModel> repositoryLanguages = new HashSet<>();
+
+    public void addRepositoryLanguage(RepositoryLanguageModel repositoryLanguage) {
+        this.repositoryLanguages.add(repositoryLanguage);
+        repositoryLanguage.setOwnerRecord(this);
+    }
+
+    private String languagesUrl;
+
+    private String commitsUrl;
+
+    private LocalDateTime pushedAt;
+
+    private LocalDateTime updatedAt;
+
+    private Integer stargazersCount;
+
+    private Integer watchersCount;
+
+    private Integer sizeKb;
+
+    private Integer openIssuesCount;
+
+    private Integer forksCount;
+
+    private Integer subscribersCount;
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public LocalDateTime getLastSyncedAt() {
@@ -58,14 +82,83 @@ public class RepositoryRecordModel {
         this.ownerRepo = ownerRepo;
     }
 
-    public String getTestString() {
-        return testString;
+    public String getLanguagesUrl() {
+        return languagesUrl;
     }
 
-    public void setTestString(String testString) {
-        this.testString = testString;
+    public void setLanguagesUrl(String languagesUrl) {
+        this.languagesUrl = languagesUrl;
     }
 
-    public RepositoryRecordModel() {
+    public String getCommitsUrl() {
+        return commitsUrl;
+    }
+
+    public void setCommitsUrl(String commitsUrl) {
+        this.commitsUrl = commitsUrl;
+    }
+
+    public LocalDateTime getPushedAt() {
+        return pushedAt;
+    }
+
+    public void setPushedAt(LocalDateTime pushedAt) {
+        this.pushedAt = pushedAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Integer getStargazersCount() {
+        return stargazersCount;
+    }
+
+    public void setStargazersCount(Integer stargazersCount) {
+        this.stargazersCount = stargazersCount;
+    }
+
+    public Integer getWatchersCount() {
+        return watchersCount;
+    }
+
+    public void setWatchersCount(Integer watchersCount) {
+        this.watchersCount = watchersCount;
+    }
+
+    public Integer getSizeKb() {
+        return sizeKb;
+    }
+
+    public void setSizeKb(Integer sizeKb) {
+        this.sizeKb = sizeKb;
+    }
+
+    public Integer getOpenIssuesCount() {
+        return openIssuesCount;
+    }
+
+    public void setOpenIssuesCount(Integer openIssuesCount) {
+        this.openIssuesCount = openIssuesCount;
+    }
+
+    public Integer getForksCount() {
+        return forksCount;
+    }
+
+    public void setForksCount(Integer forksCount) {
+        this.forksCount = forksCount;
+    }
+
+    public Integer getSubscribersCount() {
+        return subscribersCount;
+    }
+
+    public void setSubscribersCount(Integer subscribersCount) {
+        this.subscribersCount = subscribersCount;
     }
 }

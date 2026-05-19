@@ -21,15 +21,16 @@ public class UserModel {
     private boolean hasCompletedOnboarding = false;
     private boolean trackedForLeaderboard = false;
 
+    private Integer githubApiLimit;
+    private Integer githubApiRemaining;
+    private Long githubApiResetTime;
+
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RepositoryModel> repositories =  new HashSet<>();
 
     public void addRepository(RepositoryModel repository){
         repositories.add(repository);
-    }
-
-    public void deleteRepositories(){
-        repositories.clear();
+        repository.setOwner(this);
     }
 
     public Long getGithubId() {
@@ -72,14 +73,6 @@ public class UserModel {
         this.lastSync = lastSync;
     }
 
-    public Set<RepositoryModel> getRepositories() {
-        return repositories;
-    }
-
-    public void setRepositories(Set<RepositoryModel> repositories) {
-        this.repositories = repositories;
-    }
-
     public boolean isHasCompletedOnboarding() {
         return hasCompletedOnboarding;
     }
@@ -94,6 +87,38 @@ public class UserModel {
 
     public void setTrackedForLeaderboard(boolean trackedForLeaderboard) {
         this.trackedForLeaderboard = trackedForLeaderboard;
+    }
+
+    public Integer getGithubApiLimit() {
+        return githubApiLimit;
+    }
+
+    public void setGithubApiLimit(Integer githubApiLimit) {
+        this.githubApiLimit = githubApiLimit;
+    }
+
+    public Integer getGithubApiRemaining() {
+        return githubApiRemaining;
+    }
+
+    public void setGithubApiRemaining(Integer githubApiRemaining) {
+        this.githubApiRemaining = githubApiRemaining;
+    }
+
+    public Long getGithubApiResetTime() {
+        return githubApiResetTime;
+    }
+
+    public void setGithubApiResetTime(Long githubApiResetTime) {
+        this.githubApiResetTime = githubApiResetTime;
+    }
+
+    public Set<RepositoryModel> getRepositories() {
+        return repositories;
+    }
+
+    public void setRepositories(Set<RepositoryModel> repositories) {
+        this.repositories = repositories;
     }
 
     public UserModel() {

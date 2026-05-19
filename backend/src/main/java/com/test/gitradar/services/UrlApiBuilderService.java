@@ -30,11 +30,19 @@ public final class UrlApiBuilderService {
         else throw new UrlFormatException();
     }
 
-    public static String buildRepositoryUrl(UserModel user, RepositoryModel repository) {
-        return GITHUB_API_URL + "repos/" + user.getLogin() + "/" + repository.getName();
+    public static String buildRepositoryUrl(RepositoryModel repository) {
+        return GITHUB_API_URL + "repos/" + repository.getOwner().getLogin() + "/" + repository.getName();
     }
 
     public static String buildAuthRepoUrl(UserModel user) {
         return GITHUB_API_URL + "users/" + user.getLogin() + "/repos?per_page=100";
+    }
+
+    public static String buildRepositoryLanguagesUrl(RepositoryModel repository) {
+        return GITHUB_API_URL + "repos/" + repository.getOwner().getLogin() + "/" + repository.getName() + "/languages";
+    }
+
+    public static String buildRepositoryCommitsUrl(RepositoryModel repository) {
+        return GITHUB_API_URL + "repos/" + repository.getOwner().getLogin() + "/" + repository.getName() + "/commits";
     }
 }

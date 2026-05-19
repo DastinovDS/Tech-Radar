@@ -32,6 +32,8 @@ public class RepositoryModel {
 
     private boolean isTracked;
 
+    private LocalDateTime createdAt;
+
     @ManyToOne
     @JoinColumn(name="owner_id")
     private UserModel owner;
@@ -39,12 +41,22 @@ public class RepositoryModel {
     @OneToMany(mappedBy = "ownerRepo", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RepositoryRecordModel> repositoryRecords = new HashSet<>();
 
-    public void clearRepositoryRecords() {
+    @OneToMany(mappedBy = "ownerRepo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<RepositoryCommitModel> repositoryCommits = new HashSet<>();
+
+    public void clearRepository() {
         this.repositoryRecords.clear();
+        this.repositoryCommits.clear();
     }
 
     public void addRepositoryRecord(RepositoryRecordModel repositoryRecord) {
         this.repositoryRecords.add(repositoryRecord);
+        repositoryRecord.setOwnerRepo(this);
+    }
+
+    public void addRepositoryCommit(RepositoryCommitModel repositoryCommit) {
+        this.repositoryCommits.add(repositoryCommit);
+        repositoryCommit.setOwnerRepo(this);
     }
 
     public Long getRepoId() {
@@ -93,6 +105,22 @@ public class RepositoryModel {
 
     public void setRepositoryRecords(Set<RepositoryRecordModel> repositoryRecords) {
         this.repositoryRecords = repositoryRecords;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Set<RepositoryCommitModel> getRepositoryCommits() {
+        return repositoryCommits;
+    }
+
+    public void setRepositoryCommits(Set<RepositoryCommitModel> repositoryCommits) {
+        this.repositoryCommits = repositoryCommits;
     }
 
     public RepositoryModel() {

@@ -9,9 +9,9 @@ import com.test.gitradar.models.RepositoryModel;
 import com.test.gitradar.models.UserModel;
 
 import com.test.gitradar.repositories.RepoRepository;
-import com.test.gitradar.repositories.RepositoryRecordRepository;
 import com.test.gitradar.repositories.UserRepository;
 
+import com.test.gitradar.utils.GithubTimeParserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +36,13 @@ public class RepositoryService {
     RepositoryRecordService repositoryRecordDbService;
 
     @Autowired
-    RepositoryRecordRepository repositoryRecordRepository;
+    ApiRequestService apiRequestService;
 
     @Autowired
-    ApiRequestService apiRequestService;
+    GithubTimeParserUtil githubTimeParserUtil;
+
+    @Autowired
+    RepositoryCommitService repositoryCommitService;
 
     private UserModel findUserOrThrow(Long userId) {
         return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
@@ -61,7 +64,7 @@ public class RepositoryService {
 
         for (RepositoryModel repo : repositorySet) {
             try {
-                String apiString = UrlApiBuilderService.buildRepositoryUrl(user, repo);
+                String apiString = UrlApiBuilderService.buildRepositoryUrl(repo);
                 JsonNode json = apiRequestService.performApiRequest(apiString, user.getAccessToken()).block();
 
                 if (json != null) {
@@ -81,7 +84,7 @@ public class RepositoryService {
         UserModel user = findUserOrThrow(repoOwnerId);
         RepositoryModel repository = findRepositoryOrThrow(user, repoId);
 
-        repository.clearRepositoryRecords();
+        repository.clearRepository();
     }
 
     @Transactional
@@ -106,9 +109,11 @@ public class RepositoryService {
                     repository.setLastSyncedAt(LocalDateTime.now());
                     repository.setName(jsonRepo.path("name").asText());
 
-                    repository.setOwner(user);
-                    user.addRepository(repository);
+                    repository.setCreatedAt(githubTimeParserUtil.getLocalDateTimeFromString
+                            (jsonRepo.path("created_at").asText())
+                    );
 
+                    user.addRepository(repository);
                 }
             }
             userRepository.save(user);
@@ -126,6 +131,8 @@ public class RepositoryService {
         repoRepository.saveAll(repositorySet);
 
         addRecords(userId, repoIds);
+
+        // repositoryCommitService.addCommitsToRepository();
     }
 
     @Transactional
@@ -137,7 +144,7 @@ public class RepositoryService {
 
         repositorySet.forEach(repository -> {
             repository.setTracked(false);
-            repository.clearRepositoryRecords();
+            repository.clearRepository();
         });
 
         repoRepository.saveAll(repositorySet);

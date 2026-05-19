@@ -21,4 +21,7 @@ public interface RepoRepository extends JpaRepository<RepositoryModel, Long> {
     );
 
     Set<RepositoryModel> findAllByOwnerAndRepoIdIn(UserModel owner, List<Long> ids);
+
+    @Query("SELECT repo FROM RepositoryModel repo WHERE repo.isTracked = true AND repo.owner.githubId = :userId")
+    Set<RepositoryModel> findAllTrackedByUserId(@Param("userId") Long userId);
 }

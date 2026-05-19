@@ -1,7 +1,6 @@
 package com.test.gitradar.services;
 
 import com.test.gitradar.dto.UserProfileDTO;
-import com.test.gitradar.exceptions.UserNotFoundException;
 import com.test.gitradar.models.UserModel;
 import com.test.gitradar.repositories.UserRepository;
 import com.test.gitradar.utils.PrincipalUtil;
